@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API_Client.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API_Client.Controllers;
 
@@ -17,23 +18,20 @@ public class BasicEndpointsController : ControllerBase
     [HttpGet("get/success")]
     public IActionResult GetDataSuccess()
     {
-        return Ok(new
-        {
-            name = "luca",
-            age = 20,
-            password = "123",
-        });
+        return Ok(new ResponseMessage("GET", 200, "Success"));
+
     }
 
     [HttpGet("get/unauthorized")]
     public IActionResult GetDataUnauthorized()
     {
-        return Ok(new
-        {
-            name = "luca",
-            age = 20,
-            password = "123",
-        });
+        return Unauthorized(new ResponseMessage("GET", 401, "Unauthorized"));
+
+    }    [HttpGet("get/nocontent")]
+    public IActionResult GetDataNoContent()
+    {
+        return NoContent(); //no content requires empty response
+
     }
 
     #endregion
