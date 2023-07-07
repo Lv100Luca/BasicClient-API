@@ -6,7 +6,7 @@ public class ResponseMessage
     {
         Action = action;
         Status = status;
-        this.Message = message;
+        Message = message;
         
     }
     private string Action { get; set; }
