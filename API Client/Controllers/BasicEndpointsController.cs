@@ -78,9 +78,9 @@ public class BasicEndpointsController : ControllerBase
     }
 
     [HttpPost("post/error")]
-    public IActionResult PostInternalSeverError()
+    public IActionResult PostInternalSeverError(IncomingDataDto incomingData)
     {
-        throw new Exception("Internal Server Error");
+        throw new Exception($"Internal Server Error {incomingData.secret}");
         // ReSharper disable once HeuristicUnreachableCode
         // return BadRequest(new ResponseMessage("POST", 400, "Error")); unreachable (on purpose)
     }
