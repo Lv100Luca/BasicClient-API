@@ -13,7 +13,7 @@ public class BasicEndpointsController : ControllerBase
     {
         _logger = logger;
     }
-    #region Get-Requsts
+    #region Get-Requests
 
     [HttpGet("get/success")]
     public IActionResult GetDataSuccess()
