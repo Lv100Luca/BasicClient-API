@@ -9,7 +9,7 @@ public class ResponseMessage
         Message = message;
         
     }
-    private string Action { get; set; }
-    private int Status { get; set; }
-    private string Message { get; set; }
+    public string Action { get; set; }
+    public int Status { get; set; }
+    public string Message { get; set; }
 }
