@@ -1,7 +1,10 @@
-﻿namespace API_Client.Model;
+﻿using API_Client.Model.DTO;
+
+namespace API_Client.Model;
 
 public class MyDbServiceImplementation // todo implement proper DB 
 {
+    // has passwords
     private static List<User> users = new List<User>
     {
         new User("Loeka", "Keqing", "Admin"),
@@ -47,6 +50,16 @@ public class MyDbServiceImplementation // todo implement proper DB
             return true;
         }
         return false;
+    }
+
+    public static User[] GetAllUsers()
+    {
+        return users.ToArray();
+    }
+
+    public static User? Authenticate(UserLoginDto userLogin)
+    {
+        return users.Find(user => user.Username == userLogin.Username && user.Password == userLogin.Password);
     }
 
 }
