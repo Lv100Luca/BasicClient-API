@@ -1,5 +1,5 @@
-﻿using API_Client.Model;
-using API_Client.Model.DTO;
+﻿using API_Client.Model.DTO;
+using API_Client.Model.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,8 +49,14 @@ public class UserController : ControllerBase
     }
 
 
-    public string test()
+    [HttpDelete("/delete")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult DeleteUser(string name)
     {
-        return "";
+        if (UserDbService.DeleteUser(name))
+        {
+            return Ok();
+        }
+        return NotFound();
     }
 }
