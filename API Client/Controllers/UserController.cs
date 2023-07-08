@@ -30,7 +30,7 @@ public class UserController : ControllerBase
         return Ok(token);
     }
 
-    
+
     [HttpGet("/admin")]
     [Authorize(Roles = "Admin")]
     public IActionResult GetAllUsers()

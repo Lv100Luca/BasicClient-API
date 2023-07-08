@@ -14,7 +14,8 @@ public abstract class UserDb // todo implement proper DB
         new User("Bulbasaur", "Bulbasaur", "User"),
         new User("admin", "admin", "Admin"),
     };
-    
+
+
     public static User? GetUserByUsername(string username)
     {
         var user = Users.Find(user => user.Username == username);
