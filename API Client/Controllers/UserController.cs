@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API_Client.Controllers;
 
 [ApiController]
-[Route("jwt")]
+[Route("users")]
 public class UserController : ControllerBase
 {
     private readonly JwtTokenService _jwtTokenService;
@@ -33,7 +33,7 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpGet("/admin")]
+    [HttpGet]
     [Authorize(Roles = "Admin")]
     public IActionResult GetAllUsers()
     {
@@ -41,15 +41,25 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpGet("/test")]
-    [Authorize(Roles = "User")]
-    public IActionResult GetMessage()
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public IActionResult AddUser(User newUser)
     {
-        return Ok("Hello World!");
+        if (UserDbService.AddUser(newUser))
+        {
+            // return CreatedAtAction(nameof(AddUser), // ask -> wtf is this?
+            //     new
+            //     {
+            //         name = newUser.Username,
+            //     },
+            //     newUser);
+            return Created("Created user", newUser);
+        }
+        return Conflict("User already exists");
     }
 
 
-    [HttpDelete("/delete")]
+    [HttpDelete]
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteUser(string name)
     {
