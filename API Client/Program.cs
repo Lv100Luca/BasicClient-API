@@ -5,12 +5,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// load appsettings.json (idk if this is explicitly needed)
+builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
+// Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 // Dependency Injection
 builder.Services.AddSingleton<BasicEndpointsController>();
 
@@ -18,9 +22,9 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
+        policy.AllowAnyOrigin() // allows all origins
+        .AllowAnyMethod() // allows all methods
+        .AllowAnyHeader(); // allows all headers
     });
 });
 
@@ -38,9 +42,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true, // check if the tokens Audience matches
         ValidateLifetime = true, // check if the token is still valid and not expired
         ValidateIssuerSigningKey = true, // weather to validate the signature of the token
-        ValidIssuer = "my_issuer", // Replace with your issuer
-        ValidAudience = "my_audience", // Replace with your audience
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Keqing")) // set an expected signature for the token
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], // Replace with your issuer
+        ValidAudience = builder.Configuration["Jwt:Audience"], // Replace with your audience
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "FallbackString")) // set an expected signature for the token
     };
 });
 
