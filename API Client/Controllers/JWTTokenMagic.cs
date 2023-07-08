@@ -56,21 +56,22 @@ public class JwtTokenMagicController : ControllerBase
         // ask -> prevent null reference?
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // uhh
-        // claims are probably gonna be tested against what the users token claims he is 
-        // ie if his claims of username etc matches the token
-        var claims = new[] //todo: what are claims?
+        // claims hold User data
+        var claims = new[] //todo: what are claims? -> claims are what is going to be written into the Payload of the token
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Role, user.Role),
-            new Claim(ClaimTypes.Name, $"I am {user.Username} Crazy Claim"),
+            new Claim("Username", user.Username),
+            new Claim("Role", user.Role),
+            new Claim("Claim", $"I am {user.Username} Crazy Claim"),
         };
 
         var token = new JwtSecurityToken(
+            
             _config["Jwt:Issuer"],
             _config["Jwt:Audience"],
             claims,
             expires: DateTime.Now.AddMinutes(60), //token expires in 60 minutes
-            signingCredentials: credentials
+            // all the above are Claims
+            signingCredentials: credentials // this is the secret that is required to verify the tokens authenticity 
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
