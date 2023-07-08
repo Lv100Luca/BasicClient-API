@@ -59,4 +59,32 @@ public class UserController : ControllerBase
         }
         return NotFound();
     }
+
+
+    [HttpGet("me")]
+    [AllowAnonymous]
+    public IActionResult Me()
+    {
+        if (User.Identity == null)
+        {
+            return NotFound("User.Identity is null");
+        }
+        Console.Out.WriteLine(User.Identity.Name);
+        User? user = UserDbService.GetUserByUsername(User.Identity.Name);
+        if (user == null)
+        {
+            return NotFound($"no User with {User.Identity.Name} found");
+        }
+        return Ok(new
+        {
+            username = user.Username,
+            role = user.Role
+        }); // return anonymous object of user that doesnt include password
+    }
+
+
+    private string GetTokenFromHeader(IHeaderDictionary? headers)
+    {
+        return headers?.Authorization.ToString().Split(" ").Last() ?? "";
+    }
 }
