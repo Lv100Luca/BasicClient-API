@@ -38,10 +38,15 @@ public class MyDbServiceImplementation // todo implement proper DB
         return true;
     }
 
-    public static bool AddUser(User user)
+    public static bool AddUser(User newUser)
     {
-        users.Add(user);
-        return true;
+        //if user with name doesnt exist already
+        if (users.Find(user => user.Username == newUser.Username) == null)
+        {
+            users.Add(newUser);
+            return true;
+        }
+        return false;
     }
 
 }
