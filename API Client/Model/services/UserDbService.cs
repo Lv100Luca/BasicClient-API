@@ -2,7 +2,7 @@
 
 namespace API_Client.Model;
 
-public abstract class UserDb // todo implement proper DB 
+public abstract class UserDbService // todo implement proper DB 
 {
     // todo save passwords as hash
     private readonly static List<User> Users = new List<User>

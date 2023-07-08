@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     [AllowAnonymous]
     public IActionResult Login(UserLoginDto userLogin)
     {
-        var user = UserDb.Authenticate(userLogin);
+        var user = UserDbService.Authenticate(userLogin);
         if (user == null)
         {
             return NotFound();
@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     [Authorize(Roles = "Admin")]
     public IActionResult GetAllUsers()
     {
-        return Ok(UserDb.GetAllUsers());
+        return Ok(UserDbService.GetAllUsers());
     }
 
 
