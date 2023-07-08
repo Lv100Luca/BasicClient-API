@@ -34,7 +34,7 @@ public class UserController : ControllerBase
 
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     public IActionResult GetAllUsers()
     {
         return Ok(UserDbService.GetAllUsers());
@@ -72,29 +72,25 @@ public class UserController : ControllerBase
 
 
     [HttpGet("me")]
-    [AllowAnonymous]
-    public IActionResult Me()
+    [Authorize]
+    public IActionResult Me() // ask -> Better way of extracting username from token
     {
-        if (User.Identity == null)
-        {
-            return NotFound("User.Identity is null");
-        }
-        Console.Out.WriteLine(User.Identity.Name);
-        User? user = UserDbService.GetUserByUsername(User.Identity.Name);
+        var username = _jwtTokenService.GetUsernameFromToken(GetTokenFromHeader(Request.Headers));
+        User? user = UserDbService.GetUserByUsername(username);
         if (user == null)
         {
-            return NotFound($"no User with {User.Identity.Name} found");
+            return NotFound($"no User with {username} found");
         }
         return Ok(new
         {
             username = user.Username,
-            role = user.Role
+            role = user.Role,
         }); // return anonymous object of user that doesnt include password
     }
 
 
-    private string GetTokenFromHeader(IHeaderDictionary? headers)
+    private string GetTokenFromHeader(IHeaderDictionary headers)
     {
-        return headers?.Authorization.ToString().Split(" ").Last() ?? "";
+        return Request.Headers["Authorization"].ToString().Split(" ").Last();
     }
 }

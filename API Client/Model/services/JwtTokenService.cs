@@ -46,7 +46,9 @@ public class JwtTokenService
     public string GetUsernameFromToken(string token)
     {
         JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        Console.Out.WriteLine(token);
         JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(token);
+        Console.Out.WriteLine(jwtToken);
         return jwtToken.Claims.First(claim => claim.Type == "Username").Value;
     }
 }
