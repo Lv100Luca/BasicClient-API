@@ -1,4 +1,5 @@
 using API_Client.Controllers;
+using API_Client.Model.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,6 +20,9 @@ builder.Services.AddSwaggerGen();
 
 // Dependency Injection
 builder.Services.AddSingleton<BasicEndpointsController>();
+// why do i have to add both? -> maybe this make sense because both and my components
+builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddSingleton<UserController>();
 
 builder.Services.AddCors(options =>
 {
