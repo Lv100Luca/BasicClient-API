@@ -13,6 +13,7 @@ public abstract class UserDbService // todo implement proper DB
         new User("Eevee", "Eevee", "User"),
         new User("Bulbasaur", "Bulbasaur", "User"),
         new User("admin", "admin", "Admin"),
+        new User("string", "string", "Admin"),
     };
 
 
@@ -24,7 +25,7 @@ public abstract class UserDbService // todo implement proper DB
 
     public static bool DeleteUser(string username)
     {
-        return Users.Remove(Users.Find(user => user.Username == username));
+        return Users.Remove(Users.First(user => user.Username == username));
     }
 
 
