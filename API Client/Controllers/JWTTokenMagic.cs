@@ -43,6 +43,12 @@ public class JwtTokenMagicController : ControllerBase
     {
         return Ok(MyDbServiceImplementation.GetAllUsers());
     }
+    [HttpGet("/test")]
+    [Authorize(Roles = "User")]
+    public IActionResult GetMessage()
+    {
+        return Ok("Hello World!");
+    }
 
     private string GenerateToken(User user) // generates token somehow 
     // todo move to own class
