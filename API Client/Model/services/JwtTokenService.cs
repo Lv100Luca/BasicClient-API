@@ -6,7 +6,7 @@ using System.Text;
 
 namespace API_Client.Model.services;
 
-public class JwtTokenService // ask -> inject this service into the controller ??
+public class JwtTokenService
 {
     private readonly IConfiguration _configuration;
 
@@ -40,5 +40,13 @@ public class JwtTokenService // ask -> inject this service into the controller ?
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+
+    public string GetUsernameFromToken(string token)
+    {
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(token);
+        return jwtToken.Claims.First(claim => claim.Type == "Username").Value;
     }
 }
