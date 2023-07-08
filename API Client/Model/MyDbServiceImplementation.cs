@@ -12,6 +12,7 @@ public class MyDbServiceImplementation // todo implement proper DB
         new User("Pikachu", "Pikachu", "User"),
         new User("Eevee", "Eevee", "User"),
         new User("Bulbasaur", "Bulbasaur", "User"),
+        new User("admin", "admin", "Admin"),
     };
 
     //crazy comment
@@ -61,5 +62,4 @@ public class MyDbServiceImplementation // todo implement proper DB
     {
         return users.Find(user => user.Username == userLogin.Username && user.Password == userLogin.Password);
     }
-
 }
