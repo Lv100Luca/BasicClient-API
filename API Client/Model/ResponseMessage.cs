@@ -7,7 +7,7 @@ public class ResponseMessage
         Action = action;
         Status = status;
         Message = message;
-        
+
     }
     public string Action { get; set; }
     public int Status { get; set; }
