@@ -26,6 +26,7 @@ public abstract class UserDb // todo implement proper DB
         return user;
     }
 
+
     public static bool DeleteUser(string username)
     {
         var user = Users.Find(user => user.Username == username);
@@ -36,6 +37,7 @@ public abstract class UserDb // todo implement proper DB
         Users.Remove(user);
         return true;
     }
+
 
     public static bool AddUser(User newUser)
     {
@@ -48,10 +50,12 @@ public abstract class UserDb // todo implement proper DB
         return false;
     }
 
+
     public static User[] GetAllUsers()
     {
         return Users.ToArray();
     }
+
 
     public static User? Authenticate(UserLoginDto userLogin)
     {

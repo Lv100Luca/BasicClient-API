@@ -10,6 +10,8 @@ namespace API_Client.Controllers;
 public class UserController : ControllerBase
 {
     private readonly JwtTokenService _jwtTokenService;
+
+
     public UserController(JwtTokenService jwtTokenService)
     {
         _jwtTokenService = jwtTokenService;
@@ -44,5 +46,11 @@ public class UserController : ControllerBase
     public IActionResult GetMessage()
     {
         return Ok("Hello World!");
+    }
+
+
+    public string test()
+    {
+        return "";
     }
 }

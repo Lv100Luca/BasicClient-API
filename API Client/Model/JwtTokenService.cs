@@ -8,10 +8,14 @@ namespace API_Client.Model;
 public class JwtTokenService // ask -> inject this service into the controller ??
 {
     private readonly IConfiguration _config;
+
+
     public JwtTokenService(IConfiguration config)
     {
         _config = config;
     }
+
+
     public string GenerateToken(User user) // generates token somehow 
     // todo move to own class
     {
