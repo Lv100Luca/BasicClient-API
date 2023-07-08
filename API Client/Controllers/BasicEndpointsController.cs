@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API_Client.Controllers;
 
 [ApiController]
-[Route("[controller]")] //todo controller/action
+[Route("[controller]")]
 public class BasicEndpointsController : ControllerBase
 {
     private readonly ILogger<BasicEndpointsController> _logger;

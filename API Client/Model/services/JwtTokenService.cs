@@ -16,14 +16,13 @@ public class JwtTokenService // ask -> inject this service into the controller ?
     }
 
 
-    public string GenerateToken(User user) // generates token somehow 
-    // todo move to own class
+    public string GenerateToken(User user)
     {
         // ask -> prevent null reference?
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // uhh
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // hashes the security
         // claims hold User data
-        var claims = new[] //todo: what are claims? -> claims are what is going to be written into the Payload of the token
+        var claims = new[] //claims are what is going to be written into the Payload of the token
         {
             new Claim("Username", user.Username),
             new Claim("Role", user.Role),
@@ -34,7 +33,7 @@ public class JwtTokenService // ask -> inject this service into the controller ?
             _config["Jwt:Issuer"],
             _config["Jwt:Audience"],
             claims,
-            expires: DateTime.Now.AddMinutes(60), //token expires in 60 minutes
+            expires: DateTime.Now.AddMinutes(60),
             // all the above are Claims
             signingCredentials: credentials // this is the secret that is required to verify the tokens authenticity 
         );
