@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace API_Client.Model;
+namespace API_Client.Model.services;
 
 public class JwtTokenService // ask -> inject this service into the controller ??
 {

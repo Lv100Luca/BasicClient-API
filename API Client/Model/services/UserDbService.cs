@@ -1,6 +1,6 @@
 ﻿using API_Client.Model.DTO;
 
-namespace API_Client.Model;
+namespace API_Client.Model.services;
 
 public abstract class UserDbService // todo implement proper DB 
 {
@@ -18,24 +18,13 @@ public abstract class UserDbService // todo implement proper DB
 
     public static User? GetUserByUsername(string username)
     {
-        var user = Users.Find(user => user.Username == username);
-        if (user == null)
-        {
-            return null;
-        }
-        return user;
+        return Users.Find(user => user.Username == username);
     }
 
 
     public static bool DeleteUser(string username)
     {
-        var user = Users.Find(user => user.Username == username);
-        if (user == null)
-        {
-            return false;
-        }
-        Users.Remove(user);
-        return true;
+        return Users.Remove(Users.Find(user => user.Username == username));
     }
 
 
