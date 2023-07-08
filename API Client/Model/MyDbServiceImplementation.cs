@@ -5,7 +5,7 @@ namespace API_Client.Model;
 public class MyDbServiceImplementation // todo implement proper DB 
 {
     // has passwords
-    private static List<User> users = new List<User>
+    private readonly static List<User> users = new List<User>
     {
         new User("Loeka", "Keqing", "Admin"),
         new User("Cinnamonroll", "Sakana", "User"),
@@ -16,7 +16,7 @@ public class MyDbServiceImplementation // todo implement proper DB
 
     //crazy comment
     /// <summary>
-    /// Retrieves a user from the list of users based on the provided username.
+    ///     Retrieves a user from the list of users based on the provided username.
     /// </summary>
     /// <param name="username">The username to search for.</param>
     /// <returns>The user with the specified username, or null if no user is found.</returns>

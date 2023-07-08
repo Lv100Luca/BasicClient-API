@@ -29,11 +29,13 @@ public class JwtTokenMagicController : ControllerBase
     [AllowAnonymous]
     public IActionResult Login(UserLoginDto userLogin)
     {
-        User? user = MyDbServiceImplementation.Authenticate(userLogin);
+        var user = MyDbServiceImplementation.Authenticate(userLogin);
         if (user == null)
+        {
             return NotFound();
+        }
 
-        string token = GenerateToken(user);
+        var token = GenerateToken(user);
         return Ok(token);
     }
 
@@ -65,7 +67,6 @@ public class JwtTokenMagicController : ControllerBase
         };
 
         var token = new JwtSecurityToken(
-            
             _config["Jwt:Issuer"],
             _config["Jwt:Audience"],
             claims,
@@ -76,6 +77,4 @@ public class JwtTokenMagicController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-
 }

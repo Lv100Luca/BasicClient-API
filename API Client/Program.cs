@@ -8,7 +8,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // load appsettings.json (idk if this is explicitly needed)
-builder.Configuration.AddJsonFile("appsettings.json", optional: false);
+builder.Configuration.AddJsonFile("appsettings.json", false);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -46,26 +46,26 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true, // weather to validate the signature of the token
         ValidIssuer = builder.Configuration["Jwt:Issuer"], // Replace with your issuer
         ValidAudience = builder.Configuration["Jwt:Audience"], // Replace with your audience
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "FallbackString")) // set an expected signature for the token
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "FallbackString")), // set an expected signature for the token
     };
 });
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1",
+    options.SwaggerDoc("v1",
         new OpenApiInfo
         {
             Title = "Your API",
-            Version = "v1"
+            Version = "v1",
         });
-    c.AddSecurityDefinition("Bearer",
+    options.AddSecurityDefinition("Bearer",
         new OpenApiSecurityScheme
         {
             Description = "JWT Authorization header using the Bearer scheme.",
             Type = SecuritySchemeType.Http,
             Scheme = "bearer",
-            BearerFormat = "JWT"
+            BearerFormat = "JWT",
         });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -73,13 +73,12 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                    Id = "Bearer",
+                },
             },
             Array.Empty<string>()
-        }
+        },
     });
-
 });
 var app = builder.Build();
 
