@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using API_Client.Model.DTO;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,19 +8,19 @@ namespace API_Client.Model.services;
 
 public class JwtTokenService // ask -> inject this service into the controller ??
 {
-    private readonly IConfiguration _config;
+    private readonly IConfiguration _configuration;
 
 
-    public JwtTokenService(IConfiguration config)
+    public JwtTokenService(IConfiguration configuration)
     {
-        _config = config;
+        _configuration = configuration;
     }
 
 
     public string GenerateToken(User user)
     {
         // ask -> prevent null reference?
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // hashes the security
         // claims hold User data
         var claims = new[] //claims are what is going to be written into the Payload of the token
@@ -30,8 +31,8 @@ public class JwtTokenService // ask -> inject this service into the controller ?
         };
 
         var token = new JwtSecurityToken(
-            _config["Jwt:Issuer"],
-            _config["Jwt:Audience"],
+            _configuration["Jwt:Issuer"],
+            _configuration["Jwt:Audience"],
             claims,
             expires: DateTime.Now.AddMinutes(60),
             // all the above are Claims
