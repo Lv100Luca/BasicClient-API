@@ -2,6 +2,7 @@
 using API_Client.Model.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API_Client.Controllers;
 
@@ -49,12 +50,6 @@ public class UserController : ControllerBase
     {
         if (UserDbService.AddUser(newUser))
         {
-            // return CreatedAtAction(nameof(AddUser), // ask -> wtf is this?
-            //     new
-            //     {
-            //         name = newUser.Username,
-            //     },
-            //     newUser);
             return Created("Created user", newUser);
         }
         return Conflict("User already exists");
@@ -88,6 +83,24 @@ public class UserController : ControllerBase
             username = user.Username,
             role = user.Role,
         }); // return anonymous object of user that doesnt include password
+    }
+
+
+    [HttpGet("Claims")]
+    [Authorize]
+    public IActionResult GetClaims()
+    {
+        var username = (HttpContext.User.Identity as ClaimsIdentity).FindFirst(ClaimTypes.NameIdentifier).Value;
+        Console.Out.WriteLine(username);
+        if (HttpContext.User.Identity is ClaimsIdentity identity)
+        {
+            IEnumerable<Claim> claims = identity.Claims;
+            foreach (var claim in claims)
+            {
+                Console.Out.WriteLine(claim.Value);
+            }
+        }
+        return Ok();
     }
 
 
