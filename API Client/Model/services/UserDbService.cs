@@ -7,9 +7,9 @@ public abstract class UserDbService // todo implement proper DB
     // todo save passwords as hash
     private readonly static List<User> Users = new List<User>
     {
-        new User("Loeka", "Keqing", "Admin"),
-        new User("Cinnamonroll", "Sakana", "User"),
-        new User("Pikachu", "Pikachu", "User"),
+        new User("Loeka", "Keqing", "2"),
+        new User("Cinnamonroll", "Sakana", "1"),
+        new User("Pikachu", "Pikachu", "1"),
         new User("Eevee", "Eevee", "User"),
         new User("Bulbasaur", "Bulbasaur", "User"),
         new User("admin", "admin", "Admin"),
