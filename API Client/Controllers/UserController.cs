@@ -35,6 +35,8 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
+    // ask ->  handle Roles internally (load from token and apply logic in method)
+    // more control? 
     public IActionResult GetAllUsers()
     {
         return Ok(UserDbService.GetAllUsers());
