@@ -34,7 +34,7 @@ public class JwtTokenService
             _configuration["Jwt:Issuer"],
             _configuration["Jwt:Audience"],
             claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddYears(50),
             // all the above are Claims
             signingCredentials: credentials // this is the secret that is required to verify the tokens authenticity 
         );
