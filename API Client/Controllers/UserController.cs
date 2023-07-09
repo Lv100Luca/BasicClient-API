@@ -59,7 +59,7 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpDelete]
+    [HttpDelete] // ask -> fall admin wird gelöscht aber Token ist noch beim user
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteUser(string name)
     {
@@ -67,7 +67,7 @@ public class UserController : ControllerBase
         {
             return NoContent();
         }
-        return NotFound();
+        return NotFound("User not found");
     }
 
 

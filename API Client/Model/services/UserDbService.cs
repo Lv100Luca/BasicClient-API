@@ -25,7 +25,7 @@ public abstract class UserDbService // todo implement proper DB
 
     public static bool DeleteUser(string username)
     {
-        User user = Users.FirstOrDefault(u => u.Username == username) ?? null;
+        User? user = Users.FirstOrDefault(u => u.Username == username) ?? null;
         return user != null && Users.Remove(user);
     }
 
