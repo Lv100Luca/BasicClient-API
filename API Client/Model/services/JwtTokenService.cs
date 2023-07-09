@@ -25,8 +25,8 @@ public class JwtTokenService
         // claims hold User data
         var claims = new[] //claims are what is going to be written into the Payload of the token
         {
-            new Claim("Username", user.Username),
-            new Claim("Role", user.Role),
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.Role, user.Role),
             new Claim("Claim", $"I am {user.Username} Crazy Claim"),
         };
 
@@ -49,6 +49,6 @@ public class JwtTokenService
         Console.Out.WriteLine(token);
         JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(token);
         Console.Out.WriteLine(jwtToken);
-        return jwtToken.Claims.First(claim => claim.Type == "Username").Value;
+        return jwtToken.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
     }
 }

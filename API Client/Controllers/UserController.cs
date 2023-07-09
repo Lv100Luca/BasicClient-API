@@ -34,7 +34,7 @@ public class UserController : ControllerBase
 
 
     [HttpGet]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public IActionResult GetAllUsers()
     {
         return Ok(UserDbService.GetAllUsers());
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
     {
         if (UserDbService.DeleteUser(name))
         {
-            return Ok();
+            return NoContent();
         }
         return NotFound();
     }
