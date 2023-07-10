@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API_Client.Database;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace API_Client.Controllers;
@@ -43,6 +45,22 @@ public class DbEndpointsController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine("Error connecting to the database: " + ex.Message);
+        }
+        return Ok();
+    }
+
+
+    [HttpGet("all2")]
+    public IActionResult GetAllUsers2()
+    {
+        using (var dbContext = new ApiDbContext(new DbContextOptionsBuilder<ApiDbContext>().UseNpgsql("Host=localhost;Port=5432;Database=Users;Username=postgres;Password=admin").Options))
+        {
+            var users = dbContext.Users.ToList();
+
+            foreach (var user in users)
+            {
+                Console.WriteLine($"User ID: {user.Id}, Name: {user.name}");
+            }
         }
         return Ok();
     }
