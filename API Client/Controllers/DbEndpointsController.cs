@@ -9,10 +9,24 @@ namespace API_Client.Controllers;
 [Route("DB")]
 public class DbEndpointsController : ControllerBase
 {
+    private IConfiguration _configuration;
+
+
+    public DbEndpointsController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+
     [HttpGet("all")]
     public IActionResult GetAllUsers() //todo implement properly EntityMapping
     {
-        string connectionString = "Host=localhost;Port=5432;Database=Users;Username=postgres;Password=admin";
+        string? connectionString = _configuration["Db:ConnectionString"];
+        if (connectionString is null)
+        {
+            throw new Exception("No connection string found in appsettings.json");
+        }
+        Console.Out.WriteLine(connectionString);
 
         try
         {
@@ -38,7 +52,6 @@ public class DbEndpointsController : ControllerBase
                         }
                     }
                 }
-
                 connection.Close();
             }
         }
@@ -53,7 +66,12 @@ public class DbEndpointsController : ControllerBase
     [HttpGet("all2")]
     public IActionResult GetAllUsers2()
     {
-        using (var dbContext = new ApiDbContext(new DbContextOptionsBuilder<ApiDbContext>().UseNpgsql("Host=localhost;Port=5432;Database=Users;Username=postgres;Password=admin").Options))
+        string? connectionString = _configuration["Db:ConnectionString"];
+        if (connectionString is null)
+        {
+            throw new Exception("No connection string found in appsettings.json");
+        }
+        using (var dbContext = new ApiDbContext(new DbContextOptionsBuilder<ApiDbContext>().UseNpgsql(connectionString).Options))
         {
             var users = dbContext.Users.ToList();
 
