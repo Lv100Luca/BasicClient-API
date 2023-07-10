@@ -25,6 +25,7 @@ builder.Services.AddSingleton<BasicEndpointsController>();
 // why do i have to add both? -> maybe this make sense because both and my components
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<UserController>();
+builder.Services.AddSingleton<DbEndpointsController>();
 
 builder.Services.AddCors(options =>
 {
