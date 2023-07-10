@@ -3,18 +3,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Client.Database;
 
-public class UserDataContext : DbContext
+public class UserDbContext : DbContext
 {
-    public UserDataContext(DbContextOptions<UserDataContext> options) : base(options) { }
+    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options) { }
 
 
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<User> Users { get; set; }
+    public Microsoft.EntityFrameworkCore.DbSet<Role> Roles { get; set; }
+    public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.UseSerialColumns();
+        modelBuilder.Entity<User>()
+        .HasMany(e => e.Roles)
+        .WithMany(e => e.Users);
     }
 
 

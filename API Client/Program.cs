@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<BasicEndpointsController>();
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<UserController>();
-builder.Services.AddScoped<UserDataContext>(); // needs to be scoped
+builder.Services.AddScoped<UserDbContext>(); // needs to be scoped
 builder.Services.AddScoped<UserDbService>();
 // builder.Services.AddSingleton<DbEndpointsController>(); // gets automatically injected my ASP.net
 builder.Services.AddScoped<UserDbService>();
@@ -89,7 +89,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddEntityFrameworkNpgsql().AddDbContext<UserDataContext>(options =>
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<UserDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["Db:ConnectionString"]);
 });

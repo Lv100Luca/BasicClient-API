@@ -7,12 +7,12 @@ namespace API_Client.Controllers;
 
 [ApiController]
 [Route("DB")]
-public class DbEndpointsController : ControllerBase
+public class TestUserController : ControllerBase
 {
     private readonly UserDbService _userDbService;
 
 
-    public DbEndpointsController(UserDbService userDbService)
+    public TestUserController(UserDbService userDbService)
     {
         _userDbService = userDbService;
     }

@@ -1,20 +1,17 @@
 ﻿using API_Client.Database;
 using API_Client.Database.Entities;
 using API_Client.Model.DTO;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using User = API_Client.Database.Entities.User;
 
 namespace API_Client.Model.services;
 
 public class UserDbService
 {
-    private readonly UserDataContext _context;
+    private readonly UserDbContext _context;
     private readonly ILogger<UserDbService> _logger;
 
 
-    public UserDbService(ILogger<UserDbService> logger, UserDataContext context)
+    public UserDbService(ILogger<UserDbService> logger, UserDbContext context)
     {
         this._logger = logger;
         this._context = context;
@@ -23,16 +20,7 @@ public class UserDbService
 
     public List<User> GetAllUsers()
     {
-        JsonSerializerOptions options = new JsonSerializerOptions
-        {
-            ReferenceHandler = ReferenceHandler.Preserve,
-            IgnoreReadOnlyFields = true
-        };
-
-        string serializedUsers = JsonSerializer.Serialize(_context.Users.Include(u => u.Roles).ToList(), options);
-        List<User> deserializedUsers = JsonSerializer.Deserialize<List<User>>(serializedUsers, options);
-
-        return deserializedUsers;
+        return _context.Users.ToList();
     }
 
 
