@@ -1,7 +1,6 @@
 ﻿using API_Client.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace API_Client.Controllers;
 
@@ -9,77 +8,29 @@ namespace API_Client.Controllers;
 [Route("DB")]
 public class DbEndpointsController : ControllerBase
 {
-    private IConfiguration _configuration;
+    private readonly UserDbService _userDbService;
 
 
-    public DbEndpointsController(IConfiguration configuration)
+    public DbEndpointsController(UserDbService userDbService)
     {
-        _configuration = configuration;
+        _userDbService = userDbService;
     }
 
 
     [HttpGet("all")]
-    public IActionResult GetAllUsers() //todo implement properly EntityMapping
+    [AllowAnonymous]
+    public IActionResult GetAllUsers()
     {
-        string? connectionString = _configuration["Db:ConnectionString"];
-        if (connectionString is null)
-        {
-            throw new Exception("No connection string found in appsettings.json");
-        }
-        Console.Out.WriteLine(connectionString);
-
         try
         {
-            using (var connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
-                Console.WriteLine("Connection successful!");
+            var users = _userDbService.GetAllUsers();
 
-                string sql = "SELECT * FROM tbl_users";
-                using (var command = new NpgsqlCommand(sql, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            int id = reader.GetInt32(0); // Assuming the ID is stored as an integer in the first column
-                            string username = reader.GetString(1); // Assuming the username is stored as a string in the second column
-                            string name = reader.GetString(3);
-                            string sirname = reader.GetString(4);
-                            // Read other columns as needed
-
-                            Console.WriteLine($"ID: {id}, Username: {username}, Name: {name}, Surname: {sirname}");
-                        }
-                    }
-                }
-                connection.Close();
-            }
+            return Ok(users);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine("Error connecting to the database: " + ex.Message);
+            Console.WriteLine(e);
+            throw;
         }
-        return Ok();
-    }
-
-
-    [HttpGet("all2")]
-    public IActionResult GetAllUsers2()
-    {
-        string? connectionString = _configuration["Db:ConnectionString"];
-        if (connectionString is null)
-        {
-            throw new Exception("No connection string found in appsettings.json");
-        }
-        using (var dbContext = new ApiDbContext(new DbContextOptionsBuilder<ApiDbContext>().UseNpgsql(connectionString).Options))
-        {
-            var users = dbContext.Users.ToList();
-
-            foreach (var user in users)
-            {
-                Console.WriteLine($"User ID: {user.Id}, Name: {user.name}");
-            }
-        }
-        return Ok();
     }
 }

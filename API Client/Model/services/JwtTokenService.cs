@@ -20,7 +20,7 @@ public class JwtTokenService
     public string GenerateToken(User user)
     {
         // ask -> prevent null reference?
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecurityKey"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // hashes the security
         // claims hold User data
         var claims = new[] //claims are what is going to be written into the Payload of the token
