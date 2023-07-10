@@ -1,19 +1,19 @@
 ﻿namespace API_Client.Database.Entities
 {
-    public class User
+    public class User // todo split into seperate classes and rename to UserEntity
     {
-        // ask -> why do i have role and roleId in my DB after migration
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
-        public int RoleId { get; set; } = -1;
+
+        public ICollection<Role> Roles { get; set; }
 
 
-        public override string ToString()
+        override public string ToString()
         {
-            return $"Id: {Id}, Username: {Username}, Password: {Password}, Name: {Name ?? "N/A"}, Surname: {Surname ?? "N/A"}, RoleId: {RoleId}";
+            return $"Id: {Id}, Username: {Username}, Password: {Password}, Name: {Name ?? "N/A"}, Surname: {Surname ?? "N/A"}, Roles: {string.Join(", ", Roles)}";
         }
     }
 
@@ -21,6 +21,13 @@
     {
         public int Id { get; set; }
         public string RoleName { get; set; }
-        public List<User> Users { get; set; }
+
+        public ICollection<User> Users { get; set; }
+
+
+        override public string ToString()
+        {
+            return $"Id: {Id}, RoleName: {RoleName}";
+        }
     }
 }
