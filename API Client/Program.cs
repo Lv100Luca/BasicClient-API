@@ -1,6 +1,8 @@
 using API_Client.Controllers;
+using API_Client.Database;
 using API_Client.Model.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -83,6 +85,11 @@ builder.Services.AddSwaggerGen(options =>
             Array.Empty<string>()
         },
     });
+});
+
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["Db:ConnectionString"]);
 });
 var app = builder.Build();
 
