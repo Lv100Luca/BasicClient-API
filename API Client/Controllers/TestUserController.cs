@@ -36,13 +36,13 @@ public class TestUserController : ControllerBase
     }
 
 
-    [HttpPost("user")]
+    [HttpPost("addUser")]
     public IActionResult PostUser(UserDTO user)
     {
         try
         {
-            _userDbService.AddUser(user);
-            return Created("New User", "User Created");
+            var newUserId = _userDbService.AddUser(user);
+            return Created($"New User: {newUserId}", newUserId);
         }
         catch (Exception e)
         {
@@ -63,5 +63,22 @@ public class TestUserController : ControllerBase
     public IActionResult GetUserById(int id)
     {
         return Ok(_userDbService.GetUserById(id));
+    }
+
+
+    [HttpPost("test")]
+    public IActionResult Test()
+    {
+        var user = new UserDTO("Luca",
+            "admin123",
+            "Luca",
+            "Diegel",
+            new[]
+            {
+                1,
+                3,
+            });
+        var newUserId = _userDbService.AddUser(user);
+        return Created($"New User: {newUserId}", newUserId);
     }
 }

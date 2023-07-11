@@ -1,16 +1,16 @@
-﻿using API_Client.Database;
-using API_Client.Database.Entities;
+﻿using API_Client.Database.Entities;
 using API_Client.Model.DTO;
+using API_Client.Model.Inteface;
 
 namespace API_Client.Model.services;
 
 public class UserDbService
 {
-    private readonly UserDbContext _context;
+    private readonly IUserDbContext _context;
     private readonly ILogger<UserDbService> _logger;
 
 
-    public UserDbService(ILogger<UserDbService> logger, UserDbContext context)
+    public UserDbService(ILogger<UserDbService> logger, IUserDbContext context)
     {
         this._logger = logger;
         this._context = context;
@@ -23,7 +23,7 @@ public class UserDbService
     }
 
 
-    public void AddUser(UserDTO user)
+    public int AddUser(UserDTO user)
     {
         // var tmpUser = new UserEntity(user);
         var tmpUser = new UserEntity
@@ -36,7 +36,7 @@ public class UserDbService
         var userRoles = new List<RoleEntity>();
         foreach (var id in user.roles)
         {
-            var role = _context.GetRoleById(id);
+            var role = GetRoleById(id);
             if (role is not null)
             {
                 userRoles.Add(role);
@@ -48,6 +48,7 @@ public class UserDbService
         Console.Out.WriteLine(tmpUser);
         _context.Users.Add(tmpUser);
         _context.SaveChanges();
+        return tmpUser.Id;
     }
 
 
@@ -108,7 +109,7 @@ public class UserDbService
             Console.Out.WriteLine("User is null");
             return null;
         }
-        user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
+        user.Roles = GetRolesWithUserId(user.Id); // works like this
 
         return user;
     }
@@ -123,5 +124,17 @@ public class UserDbService
     public UserEntity? GetUserByName(string username)
     {
         return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Username == username));
+    }
+
+
+    public RoleEntity? GetRoleById(int id) // todo move to service
+    {
+        return _context.Roles.FirstOrDefault(r => r.Id == id);
+    }
+
+
+    public List<RoleEntity> GetRolesWithUserId(int id) // todo move to service
+    {
+        return _context.Roles.Where(r => r.Users.Any(u => u.Id == id)).ToList();
     }
 }

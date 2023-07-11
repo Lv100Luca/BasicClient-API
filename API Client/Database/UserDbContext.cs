@@ -1,9 +1,10 @@
 ﻿using API_Client.Database.Entities;
+using API_Client.Model.Inteface;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_Client.Database;
 
-public class UserDbContext : DbContext
+public class UserDbContext : DbContext, IUserDbContext
 {
     public UserDbContext(DbContextOptions<UserDbContext> options) : base(options) { }
 
@@ -25,8 +26,8 @@ public class UserDbContext : DbContext
         //     r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
         //     j => j.HasKey("UserId", "RoleId"));
 
-        modelBuilder.Entity<UserEntity>().HasIndex(user => user.Username).IsUnique(); // set username as unique
-        modelBuilder.Entity<RoleEntity>().HasIndex(role => role.RoleName).IsUnique(); // set role name as unique
+        // modelBuilder.Entity<UserEntity>().HasIndex(user => user.Username).IsUnique(); // set username as unique
+        // modelBuilder.Entity<RoleEntity>().HasIndex(role => role.RoleName).IsUnique(); // set role name as unique
 
         modelBuilder.Entity<UserEntity>() // Many-to-many with class for join entity
         .HasMany(e => e.Roles)
@@ -37,14 +38,14 @@ public class UserDbContext : DbContext
     }
 
 
-    public RoleEntity? GetRoleById(int id)
-    {
-        return Roles.FirstOrDefault(r => r.Id == id);
-    }
-
-
-    public List<RoleEntity> GetRolesWithUserId(int id)
-    {
-        return Roles.Where(r => r.Users.Any(u => u.Id == id)).ToList();
-    }
+    // public RoleEntity? GetRoleById(int id) // todo move to service
+    // {
+    //     return Roles.FirstOrDefault(r => r.Id == id);
+    // }
+    //
+    //
+    // public List<RoleEntity> GetRolesWithUserId(int id) // todo move to service
+    // {
+    //     return Roles.Where(r => r.Users.Any(u => u.Id == id)).ToList();
+    // }
 }
