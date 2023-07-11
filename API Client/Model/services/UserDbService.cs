@@ -33,7 +33,17 @@ public class UserDbService
             Name = user.name,
             Surname = user.surname
         };
-        tmpUser.Roles = _context.GetRolesWithUserId(tmpUser.Id); // works like this
+        var userRoles = new List<RoleEntity>();
+        foreach (var id in user.roles)
+        {
+            var role = _context.GetRoleById(id);
+            if (role is not null)
+            {
+                userRoles.Add(role);
+            }
+        }
+
+        tmpUser.Roles = userRoles; // works like this
 
         Console.Out.WriteLine(tmpUser);
         _context.Users.Add(tmpUser);
@@ -61,6 +71,34 @@ public class UserDbService
             return false;
         }
     }
+    // old
+    // public UserEntity? GetUserById(int id)
+    // {
+    //     Console.Out.WriteLine("Started Get User");
+    //     var user = _context.Users.FirstOrDefault(u => u.Id == id); // select User by Id
+    //
+    //     if (user == null)
+    //     {
+    //         Console.Out.WriteLine("User is null");
+    //         return null;
+    //     }
+    //     user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
+    //     return user;
+    // }
+    //
+    // public UserEntity? GetUserByName(string username)
+    // {
+    //     Console.Out.WriteLine("Started Get User");
+    //     var user = _context.Users.FirstOrDefault(u => u.Username == username); // select User by Id
+    //
+    //     if (user == null)
+    //     {
+    //         Console.Out.WriteLine("User is null");
+    //         return null;
+    //     }
+    //     user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
+    //     return user;
+    // }
 
 
     private UserEntity? CompleteRolesOfUser(UserEntity? user)
