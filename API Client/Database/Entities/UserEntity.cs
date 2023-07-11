@@ -1,7 +1,18 @@
-﻿namespace API_Client.Database.Entities;
+﻿using API_Client.Model.DTO;
+
+namespace API_Client.Database.Entities;
 
 public class UserEntity
 {
+    public UserEntity(UserDTO user)
+    {
+        Username = user.username;
+        Password = user.password;
+        Name = user.name;
+        Surname = user.surname;
+    }
+
+
     public int Id { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }

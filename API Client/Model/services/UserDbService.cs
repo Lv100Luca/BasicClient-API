@@ -25,55 +25,11 @@ public class UserDbService
 
     public void AddUser(UserDTO user)
     {
-        var tmpUser = new UserEntity
-        {
-            Username = user.username,
-            Password = user.password,
-            Name = user.name,
-            Surname = user.surname
-        };
-
-        List<RoleEntity> roles = user.roles
-        .Select(roleId => _context.GetRoleById(roleId))
-        .Where(role => role != null)
-        .ToList()!;
-
-        tmpUser.Roles = roles;
+        var tmpUser = new UserEntity(user);
+        tmpUser.Roles = _context.GetRolesWithUserId(tmpUser.Id); // works like this
 
         Console.Out.WriteLine(tmpUser);
         _context.Users.Add(tmpUser);
-        _context.SaveChanges();
-    }
-
-
-    public void AddTmpUser()
-    {
-        var user = new UserEntity
-        {
-            Username = "john_doe",
-            Password = "password123",
-            Name = "John",
-            Surname = "Doe"
-        };
-
-        RoleEntity role1 = new RoleEntity
-        {
-            Id = 1,
-            RoleName = "admin",
-        };
-        RoleEntity role2 = new RoleEntity
-        {
-            Id = 2,
-            RoleName = "user",
-        };
-
-        user.Roles = new List<RoleEntity>
-        {
-            role1,
-            role2
-        };
-        Console.Out.WriteLine(user);
-        _context.Users.Add(user);
         _context.SaveChanges();
     }
 
@@ -110,14 +66,47 @@ public class UserDbService
             Console.Out.WriteLine("User is null");
             return null;
         }
-        var roles = new List<RoleEntity>();
-        foreach (var role in _context.GetRolesWithUserId(user.Id))
-        {
-            Console.Out.WriteLine("Added Role");
-            roles.Add(role);
-        }
+        // var roles = new List<RoleEntity>();
+        // foreach (var role in _context.GetRolesWithUserId(user.Id))
+        // {
+        //     roles.Add(role);
+        // }
+        //
+        // user.Roles = roles;
 
-        user.Roles = roles;
+        user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
         return user;
     }
+
+
+    // public void AddTmpUser()
+    // {
+    //     var user = new UserEntity
+    //     {
+    //         Username = "john_doe",
+    //         Password = "password123",
+    //         Name = "John",
+    //         Surname = "Doe"
+    //     };
+    //
+    //     RoleEntity role1 = new RoleEntity
+    //     {
+    //         Id = 1,
+    //         RoleName = "admin",
+    //     };
+    //     RoleEntity role2 = new RoleEntity
+    //     {
+    //         Id = 2,
+    //         RoleName = "user",
+    //     };
+    //
+    //     user.Roles = new List<RoleEntity>
+    //     {
+    //         role1,
+    //         role2
+    //     };
+    //     Console.Out.WriteLine(user);
+    //     _context.Users.Add(user);
+    //     _context.SaveChanges();
+    // }
 }
