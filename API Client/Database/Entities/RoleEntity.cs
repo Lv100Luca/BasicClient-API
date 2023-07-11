@@ -2,14 +2,14 @@
 
 public class RoleEntity
 {
-    public RoleEntity()
+    public int Id { get; set; }
+    public string RoleName { get; set; }
+
+    public List<UserEntity> Users { get; set; }
+
+
+    override public string ToString()
     {
-        UserRoleEntities = new HashSet<UserRoleEntity>();
+        return $"Id: {Id}, RoleName: {RoleName}";
     }
-
-
-    public int pk_id { get; set; } // cant be null
-    public string role { get; set; } // cant be null
-
-    public virtual ICollection<UserRoleEntity> UserRoleEntities { get; set; } // todo hmmm
 }

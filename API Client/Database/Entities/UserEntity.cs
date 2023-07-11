@@ -1,18 +1,27 @@
 ﻿namespace API_Client.Database.Entities;
 
-public class UserEntity // todo: virtual and sealed
+public class UserEntity
 {
-    public UserEntity()
+    // public UserEntity(UserDTO user)
+    // {
+    //     Username = user.username;
+    //     Password = user.password;
+    //     Name = user.name;
+    //     Surname = user.surname;
+    // }
+
+
+    public int Id { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public string? Name { get; set; }
+    public string? Surname { get; set; }
+
+    public List<RoleEntity> Roles { get; set; }
+
+
+    override public string ToString()
     {
-        UserRoleEntities = new HashSet<UserRoleEntity>();
+        return $"Id: {Id}, Username: {Username}, Password: {Password}, Name: {Name ?? "N/A"}, Surname: {Surname ?? "N/A"}, Roles: {string.Join(", ", Roles)}";
     }
-
-
-    public int pk_id { get; set; } // cant be null
-    public string username { get; set; } // cant be null
-    public string password { get; set; } // cant be null
-    public string? name { get; set; } // can be null
-    public string? sirname { get; set; } // can be null
-
-    public virtual ICollection<UserRoleEntity> UserRoleEntities { get; set; } // todo hmmm
 }

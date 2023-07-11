@@ -1,55 +1,89 @@
-﻿using API_Client.Model.DTO;
+﻿using API_Client.Database;
+using API_Client.Database.Entities;
+using API_Client.Model.DTO;
 
 namespace API_Client.Model.services;
 
-public abstract class UserDbService // todo implement proper DB 
+public class UserDbService
 {
-    // todo save passwords as hash
-    private readonly static List<User> Users = new List<User>
-    {
-        new User("Loeka", "Keqing", "2"),
-        new User("Cinnamonroll", "Sakana", "1"),
-        new User("Pikachu", "Pikachu", "1"),
-        new User("Eevee", "Eevee", "User"),
-        new User("Bulbasaur", "Bulbasaur", "User"),
-        new User("admin", "admin", "Admin"),
-        new User("string", "string", "Admin"),
-    };
+    private readonly UserDbContext _context;
+    private readonly ILogger<UserDbService> _logger;
 
 
-    public static User? GetUserByUsername(string username)
+    public UserDbService(ILogger<UserDbService> logger, UserDbContext context)
     {
-        return Users.Find(user => user.Username == username);
+        this._logger = logger;
+        this._context = context;
     }
 
 
-    public static bool DeleteUser(string username)
+    public List<UserEntity> GetAllUsers()
     {
-        User? user = Users.FirstOrDefault(u => u.Username == username);
-        return user != null && Users.Remove(user);
+        return _context.Users.ToList();
     }
 
 
-    public static bool AddUser(User newUser)
+    public void AddUser(UserDTO user)
     {
-        //if user with name doesnt exist already
-        if (Users.Find(user => user.Username == newUser.Username) == null)
+        // var tmpUser = new UserEntity(user);
+        var tmpUser = new UserEntity
         {
-            Users.Add(newUser);
+            Username = user.username,
+            Password = user.password,
+            Name = user.name,
+            Surname = user.surname
+        };
+        tmpUser.Roles = _context.GetRolesWithUserId(tmpUser.Id); // works like this
+
+        Console.Out.WriteLine(tmpUser);
+        _context.Users.Add(tmpUser);
+        _context.SaveChanges();
+    }
+
+
+    public bool AddRole(RoleDTO role)
+    {
+        if (_context.Roles.Any(r => r.RoleName == role.RoleName)) // if Role already exists 
+        {
+            return false;
+        }
+        try
+        {
+            _context.Roles.Add(new RoleEntity
+            {
+                RoleName = role.RoleName
+            });
             return true;
         }
-        return false;
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
     }
 
 
-    public static User[] GetAllUsers()
+    private UserEntity? CompleteRolesOfUser(UserEntity? user)
     {
-        return Users.ToArray();
+        if (user == null)
+        {
+            Console.Out.WriteLine("User is null");
+            return null;
+        }
+        user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
+
+        return user;
     }
 
 
-    public static User? Authenticate(UserLoginDto userLogin)
+    public UserEntity? GetUserById(int id)
     {
-        return Users.Find(user => user.Username == userLogin.Username && user.Password == userLogin.Password);
+        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Id == id));
+    }
+
+
+    public UserEntity? GetUserByName(string username)
+    {
+        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Username == username));
     }
 }

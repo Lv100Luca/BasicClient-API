@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-//ask - why is this format diffrent to the ones the KaRa API has (Classes) while this is more like script format
+// todo change to new Syntax
 var builder = WebApplication.CreateBuilder(args);
 
 // load appsettings.json (idk if this is explicitly needed)
@@ -20,11 +20,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Dependency Injection
 builder.Services.AddSingleton<BasicEndpointsController>();
-// why do i have to add both? -> maybe this make sense because both and my components
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<UserController>();
+builder.Services.AddScoped<UserDbContext>(); // needs to be scoped
+builder.Services.AddScoped<UserDbService>();
+// builder.Services.AddSingleton<DbEndpointsController>(); // gets automatically injected my ASP.net
+builder.Services.AddScoped<UserDbService>();
 
 builder.Services.AddCors(options =>
 {
@@ -52,7 +54,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true, // weather to validate the signature of the token
         ValidIssuer = builder.Configuration["Jwt:Issuer"], // Replace with your issuer
         ValidAudience = builder.Configuration["Jwt:Audience"], // Replace with your audience
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "FallbackString")), // set an expected signature for the token
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecurityKey"])), // set an expected signature for the token
     };
 });
 builder.Services.AddSwaggerGen(options =>
@@ -87,7 +89,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<UserDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["Db:ConnectionString"]);
 });

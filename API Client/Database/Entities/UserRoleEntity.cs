@@ -2,9 +2,9 @@
 
 public class UserRoleEntity
 {
-    public int fk_user_id { get; set; }
-    public int fk_role_id { get; set; }
-
-    public virtual UserEntity User { get; set; }
-    public virtual RoleEntity Role { get; set; }
+    public int UserId { get; set; } // Many-to-many with class for join entity
+    public int RoleId { get; set; }
 }
+//     public virtual User User { get; set; } = null!; // Many-to-many with navigations to and from join entity
+//     public virtual Role Role { get; set; } = null!;
+// }
