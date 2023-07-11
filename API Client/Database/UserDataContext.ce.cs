@@ -8,9 +8,9 @@ public class UserDbContext : DbContext
     public UserDbContext(DbContextOptions<UserDbContext> options) : base(options) { }
 
 
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<RoleEntity> Roles { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<UserRoleEntity> UserRoles { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,17 +25,23 @@ public class UserDbContext : DbContext
         //     r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
         //     j => j.HasKey("UserId", "RoleId"));
 
-        modelBuilder.Entity<User>() // Many-to-many with class for join entity
+        modelBuilder.Entity<UserEntity>() // Many-to-many with class for join entity
         .HasMany(e => e.Roles)
         .WithMany(e => e.Users)
-        .UsingEntity<UserRole>(
-            l => l.HasOne<Role>().WithMany().HasForeignKey(e => e.RoleId),
-            r => r.HasOne<User>().WithMany().HasForeignKey(e => e.UserId));
+        .UsingEntity<UserRoleEntity>(
+            l => l.HasOne<RoleEntity>().WithMany().HasForeignKey(e => e.RoleId),
+            r => r.HasOne<UserEntity>().WithMany().HasForeignKey(e => e.UserId));
     }
 
 
-    public Role? GetRoleById(int id)
+    public RoleEntity? GetRoleById(int id)
     {
         return Roles.FirstOrDefault(r => r.Id == id);
+    }
+
+
+    public List<RoleEntity> GetRolesWithUserId(int id)
+    {
+        return Roles.Where(r => r.Users.Any(u => u.Id == id)).ToList();
     }
 }

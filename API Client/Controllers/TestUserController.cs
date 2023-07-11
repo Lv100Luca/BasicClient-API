@@ -37,7 +37,7 @@ public class TestUserController : ControllerBase
 
 
     [HttpPost("user")]
-    public IActionResult PostUser(User2 user)
+    public IActionResult PostUser(UserDTO user)
     {
         try
         {
@@ -52,7 +52,7 @@ public class TestUserController : ControllerBase
 
 
     [HttpPost("role")]
-    public IActionResult AddRole(Database.Entities.Role role)
+    public IActionResult AddRole(RoleDTO role)
     {
         var entity = _userDbService.AddRole(role);
         return Ok();

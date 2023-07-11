@@ -43,23 +43,23 @@ public class BasicEndpointsController : ControllerBase
     #region Post-Requests
 
     [HttpPost("post/success")]
-    public IActionResult PostSuccess(IncomingDataDto incomingData)
+    public IActionResult PostSuccess(string secret)
     {
-        return Ok(new ResponseMessage("POST", 200, $"Success: {incomingData.secret}"));
+        return Ok(new ResponseMessage("POST", 200, $"Success: {secret}"));
     }
 
 
     [HttpPost("post/unauthorized")]
-    public IActionResult PostUnauthorized(IncomingDataDto incomingData)
+    public IActionResult PostUnauthorized(string secret)
     {
-        return Unauthorized(new ResponseMessage("POST", 401, $"Unauthorized: {incomingData.secret}"));
+        return Unauthorized(new ResponseMessage("POST", 401, $"Unauthorized: {secret}"));
     }
 
 
     [HttpPost("post/nocontent")]
-    public IActionResult PostNoContent(IncomingDataDto incomingData)
+    public IActionResult PostNoContent(string secret)
     {
-        _logger.LogTrace(incomingData.secret.ToString());
+        _logger.LogTrace(secret);
         return NoContent(); //no content requires empty response
     }
 
@@ -86,10 +86,9 @@ public class BasicEndpointsController : ControllerBase
 
 
     [HttpPost("post/error")]
-    public IActionResult PostInternalSeverError(IncomingDataDto incomingData)
+    public IActionResult PostInternalSeverError(string secret)
     {
-        throw new Exception($"Internal Server Error {incomingData.secret}");
-        // ReSharper disable once HeuristicUnreachableCode
+        throw new Exception($"Internal Server Error {secret}");
         // return BadRequest(new ResponseMessage("POST", 400, "Error")); unreachable (on purpose)
     }
 

@@ -1,7 +1,6 @@
 ﻿using API_Client.Database;
 using API_Client.Database.Entities;
 using API_Client.Model.DTO;
-using User = API_Client.Database.Entities.User;
 
 namespace API_Client.Model.services;
 
@@ -18,15 +17,15 @@ public class UserDbService
     }
 
 
-    public List<User> GetAllUsers()
+    public List<UserEntity> GetAllUsers()
     {
         return _context.Users.ToList();
     }
 
 
-    public void AddUser(User2 user)
+    public void AddUser(UserDTO user)
     {
-        var tmpUser = new User
+        var tmpUser = new UserEntity
         {
             Username = user.username,
             Password = user.password,
@@ -34,7 +33,7 @@ public class UserDbService
             Surname = user.surname
         };
 
-        List<Role> roles = user.roles
+        List<RoleEntity> roles = user.roles
         .Select(roleId => _context.GetRoleById(roleId))
         .Where(role => role != null)
         .ToList()!;
@@ -49,7 +48,7 @@ public class UserDbService
 
     public void AddTmpUser()
     {
-        var user = new User
+        var user = new UserEntity
         {
             Username = "john_doe",
             Password = "password123",
@@ -57,18 +56,18 @@ public class UserDbService
             Surname = "Doe"
         };
 
-        Role role1 = new Role
+        RoleEntity role1 = new RoleEntity
         {
             Id = 1,
             RoleName = "admin",
         };
-        Role role2 = new Role
+        RoleEntity role2 = new RoleEntity
         {
             Id = 2,
             RoleName = "user",
         };
 
-        user.Roles = new List<Role>
+        user.Roles = new List<RoleEntity>
         {
             role1,
             role2
@@ -79,33 +78,43 @@ public class UserDbService
     }
 
 
-    public bool AddRole(Database.Entities.Role role)
+    public bool AddRole(RoleDTO role)
     {
-        var entity = _context.Roles.Add(role);
-        Console.Out.WriteLine(entity.Entity);
-        return entity != null;
+        if (_context.Roles.Any(r => r.RoleName == role.RoleName)) // if Role already exists 
+        {
+            return false;
+        }
+        try
+        {
+            _context.Roles.Add(new RoleEntity
+            {
+                RoleName = role.RoleName
+            });
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
     }
 
 
-    public User GetUserById(int id)
+    public UserEntity? GetUserById(int id)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == id)!;
-        Console.Out.WriteLine("========================================================================================");
-        _context.UserRoles.Where(ur => ur.UserId == id).ToList().ForEach(u => Console.Out.WriteLine(_context.GetRoleById(u.RoleId).RoleName));
+        Console.Out.WriteLine("Started Get User");
+        var user = _context.Users.FirstOrDefault(u => u.Id == id); // select User by Id
 
-        var rolesInt = new List<int>();
-
-        Console.Out.WriteLine(rolesInt.Count);
-        List<Role> roles = new List<Role>();
-        foreach (var i in rolesInt)
+        if (user == null)
         {
-            var role = _context.GetRoleById(i);
-            Console.Out.WriteLine("ROLE: " + role);
-            if (role is not null)
-            {
-                Console.Out.WriteLine($"Added Role {role.RoleName} to User {user.Username}");
-                roles.Add(role);
-            }
+            Console.Out.WriteLine("User is null");
+            return null;
+        }
+        var roles = new List<RoleEntity>();
+        foreach (var role in _context.GetRolesWithUserId(user.Id))
+        {
+            Console.Out.WriteLine("Added Role");
+            roles.Add(role);
         }
 
         user.Roles = roles;
