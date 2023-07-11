@@ -25,6 +25,9 @@ public class UserDbContext : DbContext
         //     r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UserId").HasPrincipalKey(nameof(User.Id)),
         //     j => j.HasKey("UserId", "RoleId"));
 
+        modelBuilder.Entity<UserEntity>().HasIndex(user => user.Username).IsUnique(); // set username as unique
+        modelBuilder.Entity<RoleEntity>().HasIndex(role => role.RoleName).IsUnique(); // set role name as unique
+
         modelBuilder.Entity<UserEntity>() // Many-to-many with class for join entity
         .HasMany(e => e.Roles)
         .WithMany(e => e.Users)
