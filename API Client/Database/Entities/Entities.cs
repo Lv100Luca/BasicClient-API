@@ -8,7 +8,7 @@
         public string? Name { get; set; }
         public string? Surname { get; set; }
 
-        public ICollection<Role> Roles { get; set; }
+        public List<Role> Roles { get; set; }
 
 
         override public string ToString()
@@ -22,7 +22,7 @@
         public int Id { get; set; }
         public string RoleName { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public List<User> Users { get; set; }
 
 
         override public string ToString()
@@ -30,4 +30,14 @@
             return $"Id: {Id}, RoleName: {RoleName}";
         }
     }
+
+
+    public class UserRole
+    {
+        public int UserId { get; set; } // Many-to-many with class for join entity
+        public int RoleId { get; set; }
+    }
+    //     public virtual User User { get; set; } = null!; // Many-to-many with navigations to and from join entity
+    //     public virtual Role Role { get; set; } = null!;
+    // }
 }

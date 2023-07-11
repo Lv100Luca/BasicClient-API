@@ -34,7 +34,7 @@ public class UserDbService
             Surname = user.surname
         };
 
-        ICollection<Role> roles = user.roles
+        List<Role> roles = user.roles
         .Select(roleId => _context.GetRoleById(roleId))
         .Where(role => role != null)
         .ToList()!;
@@ -59,11 +59,13 @@ public class UserDbService
 
         Role role1 = new Role
         {
+            Id = 1,
             RoleName = "admin",
         };
         Role role2 = new Role
         {
-            RoleName = "asdf",
+            Id = 2,
+            RoleName = "user",
         };
 
         user.Roles = new List<Role>
@@ -82,5 +84,31 @@ public class UserDbService
         var entity = _context.Roles.Add(role);
         Console.Out.WriteLine(entity.Entity);
         return entity != null;
+    }
+
+
+    public User GetUserById(int id)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == id)!;
+        Console.Out.WriteLine("========================================================================================");
+        _context.UserRoles.Where(ur => ur.UserId == id).ToList().ForEach(u => Console.Out.WriteLine(_context.GetRoleById(u.RoleId).RoleName));
+
+        var rolesInt = new List<int>();
+
+        Console.Out.WriteLine(rolesInt.Count);
+        List<Role> roles = new List<Role>();
+        foreach (var i in rolesInt)
+        {
+            var role = _context.GetRoleById(i);
+            Console.Out.WriteLine("ROLE: " + role);
+            if (role is not null)
+            {
+                Console.Out.WriteLine($"Added Role {role.RoleName} to User {user.Username}");
+                roles.Add(role);
+            }
+        }
+
+        user.Roles = roles;
+        return user;
     }
 }

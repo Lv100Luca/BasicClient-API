@@ -65,4 +65,11 @@ public class TestUserController : ControllerBase
         _userDbService.AddTmpUser();
         return Ok();
     }
+
+
+    [HttpPost("user/test")]
+    public IActionResult test(int id)
+    {
+        return Ok(_userDbService.GetUserById(id));
+    }
 }
