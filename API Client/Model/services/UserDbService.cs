@@ -25,7 +25,14 @@ public class UserDbService
 
     public void AddUser(UserDTO user)
     {
-        var tmpUser = new UserEntity(user);
+        // var tmpUser = new UserEntity(user);
+        var tmpUser = new UserEntity
+        {
+            Username = user.username,
+            Password = user.password,
+            Name = user.name,
+            Surname = user.surname
+        };
         tmpUser.Roles = _context.GetRolesWithUserId(tmpUser.Id); // works like this
 
         Console.Out.WriteLine(tmpUser);
@@ -56,57 +63,27 @@ public class UserDbService
     }
 
 
-    public UserEntity? GetUserById(int id)
+    private UserEntity? CompleteRolesOfUser(UserEntity? user)
     {
-        Console.Out.WriteLine("Started Get User");
-        var user = _context.Users.FirstOrDefault(u => u.Id == id); // select User by Id
-
         if (user == null)
         {
             Console.Out.WriteLine("User is null");
             return null;
         }
-        // var roles = new List<RoleEntity>();
-        // foreach (var role in _context.GetRolesWithUserId(user.Id))
-        // {
-        //     roles.Add(role);
-        // }
-        //
-        // user.Roles = roles;
-
         user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
+
         return user;
     }
 
 
-    // public void AddTmpUser()
-    // {
-    //     var user = new UserEntity
-    //     {
-    //         Username = "john_doe",
-    //         Password = "password123",
-    //         Name = "John",
-    //         Surname = "Doe"
-    //     };
-    //
-    //     RoleEntity role1 = new RoleEntity
-    //     {
-    //         Id = 1,
-    //         RoleName = "admin",
-    //     };
-    //     RoleEntity role2 = new RoleEntity
-    //     {
-    //         Id = 2,
-    //         RoleName = "user",
-    //     };
-    //
-    //     user.Roles = new List<RoleEntity>
-    //     {
-    //         role1,
-    //         role2
-    //     };
-    //     Console.Out.WriteLine(user);
-    //     _context.Users.Add(user);
-    //     _context.SaveChanges();
-    // }
+    public UserEntity? GetUserById(int id)
+    {
+        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Id == id));
+    }
+
+
+    public UserEntity? GetUserByName(string username)
+    {
+        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Username == username));
+    }
 }
