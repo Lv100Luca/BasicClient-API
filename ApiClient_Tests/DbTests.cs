@@ -1,3 +1,5 @@
+using API_Client.Database;
+using API_Client.Model.DTO;
 using API_Client.Model.services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
