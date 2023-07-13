@@ -10,10 +10,10 @@ public class DataService
 {
     private readonly DataContext _context;
     private readonly ILogger<DataService> _logger;
-    private readonly IPasswordHasher<UserDto> _passwordHasher;
+    private readonly IPasswordHasher<User> _passwordHasher;
 
 
-    public DataService(ILogger<DataService> logger, DataContext context, IPasswordHasher<UserDto> passwordHasher)
+    public DataService(ILogger<DataService> logger, DataContext context, IPasswordHasher<User> passwordHasher)
     {
         this._logger = logger;
         this._context = context;
@@ -32,10 +32,10 @@ public class DataService
         var newUser = new User
         {
             Username = user.username,
-            Password = _passwordHasher.HashPassword(user, user.password),
             FirstName = user.name,
             LastName = user.surname,
         };
+        newUser.Password = _passwordHasher.HashPassword(newUser, user.password);
         // List<Role> roles = new List<Role>();
         // foreach (var id in user.roles)
         // {
@@ -108,5 +108,18 @@ public class DataService
     public Role? GetRoleById(int id)
     {
         return _context.Roles.FirstOrDefault(r => r.Id == id);
+    }
+
+
+    public User? Authenticate(LoginDto userLogin)
+    {
+        var user = GetUserByName(userLogin.Username);
+        if (user is null)
+        {
+            return null;
+        }
+        var success = _passwordHasher.VerifyHashedPassword(user, user.Password, userLogin.Password) == 0;
+
+        return success ? user : null;
     }
 }

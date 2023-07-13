@@ -1,6 +1,6 @@
 using API_Client.Controllers;
 using API_Client.Database;
-using API_Client.Model.DTO;
+using API_Client.Database.Entities;
 using API_Client.Model.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +26,7 @@ builder.Services.AddSingleton<BasicEndpointsController>();
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<UserController>();
 builder.Services.AddScoped<DataContext>(); // needs to be scoped
-builder.Services.AddSingleton<IPasswordHasher<UserDto>, PasswordHasher<UserDto>>();
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<DataService>();
 // builder.Services.AddSingleton<DbEndpointsController>(); // gets automatically injected my ASP.net
 
