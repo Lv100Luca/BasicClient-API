@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Client.Controllers;
 
-[ApiController]
-[Route("DB")]
-public class TestUserController : ControllerBase
+public class ManageUserController : ControllerBase
 {
-    private readonly UserService _userService;
+    private readonly DataService _dataService;
+    private readonly ILogger<ManageUserController> _logger;
 
 
-    public TestUserController(UserService userService)
+    public ManageUserController(DataService dataService, ILogger<ManageUserController> logger)
     {
-        _userService = userService;
+        _dataService = dataService;
+        _logger = logger;
     }
 
 
@@ -27,7 +27,7 @@ public class TestUserController : ControllerBase
     {
         try
         {
-            var users = _userService.GetAllUsers().Result;
+            var users = _dataService.GetAllUsers().Result;
 
             if (users.Count == 0)
             {
@@ -44,9 +44,9 @@ public class TestUserController : ControllerBase
 
 
     [HttpPost("user")]
-    public IActionResult PostUser(UserDTO user)
+    public IActionResult PostUser(UserDto user)
     {
-        var newUser = _userService.AddUser(user);
+        var newUser = _dataService.AddUser(user);
         if (newUser is not null)
         {
             return Created(newUser.Id.ToString(), newUser);
@@ -55,23 +55,10 @@ public class TestUserController : ControllerBase
     }
 
 
-    [HttpPost("role")]
-    public IActionResult AddRole(RoleDTO role)
-    {
-        var newRole = _userService.AddRole(role);
-
-        if (newRole is not null)
-        {
-            return Created(newRole.Id.ToString(), newRole);
-        }
-        return Conflict($"Role with Name '{role.RoleName}' already exists.");
-    }
-
-
     [HttpGet("user/{id:int}")]
     public IActionResult GetUserById(int id)
     {
-        return Ok(_userService.GetUserById(id));
+        return Ok(_dataService.GetUserById(id));
     }
 
 
@@ -80,7 +67,7 @@ public class TestUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult DeleteUser(int id)
     {
-        if (_userService.DeleteUser(id))
+        if (_dataService.DeleteUser(id))
         {
             return NoContent();
         }

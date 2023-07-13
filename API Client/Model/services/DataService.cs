@@ -1,20 +1,23 @@
 ﻿using API_Client.Database;
 using API_Client.Database.Entities;
 using API_Client.Model.DTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_Client.Model.services;
 
-public class UserService
+public class DataService
 {
     private readonly DataContext _context;
-    private readonly ILogger<UserService> _logger;
+    private readonly ILogger<DataService> _logger;
+    private readonly IPasswordHasher<UserDto> _passwordHasher;
 
 
-    public UserService(ILogger<UserService> logger, DataContext context)
+    public DataService(ILogger<DataService> logger, DataContext context, IPasswordHasher<UserDto> passwordHasher)
     {
         this._logger = logger;
         this._context = context;
+        _passwordHasher = passwordHasher;
     }
 
 
@@ -24,12 +27,12 @@ public class UserService
     }
 
 
-    public User? AddUser(UserDTO user)
+    public User? AddUser(UserDto user)
     {
         var newUser = new User
         {
             Username = user.username,
-            Password = user.password,
+            Password = _passwordHasher.HashPassword(user, user.password),
             FirstName = user.name,
             LastName = user.surname,
         };
@@ -74,7 +77,7 @@ public class UserService
     }
 
 
-    public Role? AddRole(RoleDTO role)
+    public Role? AddRole(RoleDto role)
     {
         if (_context.Roles.Any(r => r.RoleName == role.RoleName)) // if Role already exists 
         {
