@@ -39,15 +39,12 @@ public class TestUserController : ControllerBase
     [HttpPost("user")]
     public IActionResult PostUser(UserDTO user)
     {
-        try
+        var newUser = _userDbService.AddUser(user);
+        if (user is not null)
         {
-            _userDbService.AddUser(user);
-            return Created("New User", "User Created");
+            return Ok(newUser);
         }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return BadRequest("hm");
     }
 
 

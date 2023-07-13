@@ -1,69 +1,82 @@
 ﻿using API_Client.Database;
 using API_Client.Database.Entities;
 using API_Client.Model.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace API_Client.Model.services;
 
 public class UserDbService
 {
-    private readonly UserDbContext _context;
+    private readonly DataContext _context;
     private readonly ILogger<UserDbService> _logger;
 
 
-    public UserDbService(ILogger<UserDbService> logger, UserDbContext context)
+    public UserDbService(ILogger<UserDbService> logger, DataContext context)
     {
         this._logger = logger;
         this._context = context;
     }
 
 
-    public List<UserEntity> GetAllUsers()
+    public List<User> GetAllUsers()
     {
-        return _context.Users.ToList();
+        return _context.Users.Include(u => u.Roles).ToList();
     }
 
 
-    public void AddUser(UserDTO user)
+    public User? AddUser(UserDTO user)
     {
-        // var tmpUser = new UserEntity(user);
-        var tmpUser = new UserEntity
+        var newUser = new User
         {
             Username = user.username,
             Password = user.password,
-            Name = user.name,
-            Surname = user.surname
+            FirstName = user.name,
+            LastName = user.surname,
         };
-        tmpUser.Roles = _context.GetRolesWithUserId(tmpUser.Id); // works like this
+        // List<Role> roles = new List<Role>();
+        // foreach (var id in user.roles)
+        // {
+        //     var role = _context.GetRoleById(id);
+        //     if (role is not null)
+        //     {
+        //         role.Users.Add(newUser);
+        //         roles.Add(role);
+        //     }
+        // }
+        // newUser.Roles = roles;
 
-        Console.Out.WriteLine(tmpUser);
-        _context.Users.Add(tmpUser);
-        _context.SaveChanges();
+        newUser.Roles = user.roles
+        .Select(id => _context.GetRoleById(id))
+        .Where(role => role is not null)
+        .Select(role =>
+        {
+            role.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped
+            return role;
+        })
+        .ToList();
+
+        _context.Users.Add(newUser);
+        _context.SaveChangesAsync();
+        return newUser;
     }
 
 
-    public bool AddRole(RoleDTO role)
+    public Role? AddRole(RoleDTO role)
     {
         if (_context.Roles.Any(r => r.RoleName == role.RoleName)) // if Role already exists 
         {
-            return false;
+            return null;
         }
-        try
+        var newRole = new Role
         {
-            _context.Roles.Add(new RoleEntity
-            {
-                RoleName = role.RoleName
-            });
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return false;
-        }
+            RoleName = role.RoleName,
+        };
+        _context.Roles.Add(newRole);
+        return newRole;
     }
 
 
-    private UserEntity? CompleteRolesOfUser(UserEntity? user)
+    private User? CompleteRolesOfUser(User? user)
     {
         if (user == null)
         {
@@ -76,14 +89,14 @@ public class UserDbService
     }
 
 
-    public UserEntity? GetUserById(int id)
+    public User? GetUserById(int id)
     {
-        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Id == id));
+        return _context.Users.Include(u => u.Roles).FirstOrDefault<User>(u => u.Id == id);
     }
 
 
-    public UserEntity? GetUserByName(string username)
+    public User? GetUserByName(string username)
     {
-        return CompleteRolesOfUser(_context.Users.FirstOrDefault(u => u.Username == username));
+        return _context.Users.Include(u => u.Roles).FirstOrDefault<User>(u => u.Username == username);
     }
 }
