@@ -24,9 +24,9 @@ builder.Services.AddSingleton<BasicEndpointsController>();
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<UserController>();
 builder.Services.AddScoped<DataContext>(); // needs to be scoped
-builder.Services.AddScoped<UserDbService>();
+builder.Services.AddScoped<UserService>();
 // builder.Services.AddSingleton<DbEndpointsController>(); // gets automatically injected my ASP.net
-builder.Services.AddScoped<UserDbService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddCors(options =>
 {

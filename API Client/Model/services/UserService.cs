@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Client.Model.services;
 
-public class UserDbService
+public class UserService
 {
     private readonly DataContext _context;
-    private readonly ILogger<UserDbService> _logger;
+    private readonly ILogger<UserService> _logger;
 
 
-    public UserDbService(ILogger<UserDbService> logger, DataContext context)
+    public UserService(ILogger<UserService> logger, DataContext context)
     {
         this._logger = logger;
         this._context = context;
     }
 
 
-    public List<User> GetAllUsers()
+    public Task<List<User>> GetAllUsers()
     {
-        return _context.Users.Include(u => u.Roles).ToList();
+        return _context.Users.Include(u => u.Roles).ToListAsync();
     }
 
 
@@ -46,18 +46,31 @@ public class UserDbService
         // newUser.Roles = roles;
 
         newUser.Roles = user.roles
-        .Select(id => _context.GetRoleById(id))
+        .Select(GetRoleById)
         .Where(role => role is not null)
         .Select(role =>
         {
-            role.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped
+            role!.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped because of .Where
             return role;
         })
         .ToList();
 
         _context.Users.Add(newUser);
-        _context.SaveChangesAsync();
+        _context.SaveChanges();
         return newUser;
+    }
+
+
+    public bool DeleteUser(int id)
+    {
+        var user = _context.Users.Find(id);
+        if (user is null)
+        {
+            return false;
+        }
+        _context.Users.Remove(user);
+        _context.SaveChanges();
+        return true;
     }
 
 
@@ -72,20 +85,8 @@ public class UserDbService
             RoleName = role.RoleName,
         };
         _context.Roles.Add(newRole);
+        _context.SaveChanges();
         return newRole;
-    }
-
-
-    private User? CompleteRolesOfUser(User? user)
-    {
-        if (user == null)
-        {
-            Console.Out.WriteLine("User is null");
-            return null;
-        }
-        user.Roles = _context.GetRolesWithUserId(user.Id); // works like this
-
-        return user;
     }
 
 
@@ -98,5 +99,11 @@ public class UserDbService
     public User? GetUserByName(string username)
     {
         return _context.Users.Include(u => u.Roles).FirstOrDefault<User>(u => u.Username == username);
+    }
+
+
+    public Role? GetRoleById(int id)
+    {
+        return _context.Roles.FirstOrDefault(r => r.Id == id);
     }
 }
