@@ -2,7 +2,7 @@
 
 namespace API_Client.Database.Entities;
 
-public class User
+public class User // todo add Mail Field
 {
     // public UserEntity(UserDTO user)
     // {
