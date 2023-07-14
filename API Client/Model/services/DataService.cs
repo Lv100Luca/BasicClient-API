@@ -47,22 +47,28 @@ public class DataService
         //     }
         // }
         // newUser.Roles = roles;
-        if (user.roles != null)
+
+        AddRolesToUser(newUser, user.roles);
+        _context.Users.Add(newUser);
+        _context.SaveChanges();
+        return newUser;
+    }
+
+
+    private void AddRolesToUser(User user, int[] roles)
+    {
+        if (roles != null)
         {
-            newUser.Roles = user.roles
+            user.Roles = roles
             .Select(GetRoleById)
             .Where(role => role is not null)
             .Select(role =>
             {
-                role!.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped because of .Where
+                role!.Users.Add(user); // seems to be no issue -> no roles/not existing roles get skipped because of .Where
                 return role;
             })
             .ToList();
         }
-
-        _context.Users.Add(newUser);
-        _context.SaveChanges();
-        return newUser;
     }
 
 
@@ -76,6 +82,42 @@ public class DataService
         _context.Users.Remove(user);
         _context.SaveChanges();
         return true;
+    }
+
+
+    public bool ChangeUserInformation(UserDto userDto)
+    {
+        User? user = GetUserById(userDto.id);
+        if (user is null)
+        {
+            return false;
+        }
+        user.Username = userDto.username;
+        user.FirstName = userDto.name;
+        user.LastName = userDto.surname;
+        user.Roles = new List<Role>();
+        AddRolesToUser(user, userDto.roles);
+        _context.SaveChanges();
+        return true;
+    }
+
+
+    public bool ChangePassword(UserDto userDto)
+    {
+        User? user = GetUserById(userDto.id);
+        if (user is null)
+        {
+            return false;
+        }
+        user.Password = _passwordHasher.HashPassword(user, userDto.password);
+        _context.SaveChanges();
+        return true;
+    }
+
+
+    public bool VerifyPassword(User user, string password)
+    {
+        return _passwordHasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Success;
     }
 
 
@@ -120,8 +162,7 @@ public class DataService
         {
             return null;
         }
-        var success = _passwordHasher.VerifyHashedPassword(user, user.Password, userLogin.Password) == PasswordVerificationResult.Success;
-
+        var success = VerifyPassword(user, userLogin.Password);
         return success ? user : null;
     }
 }
