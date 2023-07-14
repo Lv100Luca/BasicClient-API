@@ -48,11 +48,11 @@ public class ManageUserController : ControllerBase
     public IActionResult PostUser(UserDto user)
     {
         var newUser = _dataService.AddUser(user);
-        if (newUser is not null)
+        if (newUser is null)
         {
-            return Created(newUser.Id.ToString(), newUser);
+            return BadRequest("hm"); // todo look at error handling
         }
-        return BadRequest("hm"); // todo look at error handling
+        return Created(newUser.Id.ToString(), newUser);
     }
 
 
@@ -73,5 +73,31 @@ public class ManageUserController : ControllerBase
             return NoContent();
         }
         return NotFound($"User {id} doesnt exist.");
+    }
+
+
+    [HttpPatch("user")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult ChangeUser(UserDto userDto)
+    {
+        if (_dataService.ChangeUserInformation(userDto))
+        {
+            return NoContent();
+        }
+        return NotFound($"User {userDto.id} doesnt exist.");
+    }
+
+
+    [HttpPatch("user/changePassword")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult ChangeUserPassword(UserDto userDto) // todo improve logic 
+    {
+        if (_dataService.ChangePassword(userDto))
+        {
+            return NoContent();
+        }
+        return NotFound($"User {userDto.id} doesnt exist.");
     }
 }
