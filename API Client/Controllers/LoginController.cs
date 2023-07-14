@@ -60,6 +60,21 @@ public class LoginController : ControllerBase
     }
 
 
+    [HttpPost("register")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult RegisterUser(UserDto newUserDto)
+    {
+        var newUser = _dataService.AddUser(newUserDto);
+        if (newUser is null)
+        {
+            return BadRequest("hm"); // todo look at error handling
+        }
+        return Created(newUser.Id.ToString(), newUser);
+    }
+
+
     [HttpPost("test")]
     public IActionResult Test()
     {
