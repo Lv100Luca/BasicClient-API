@@ -23,12 +23,17 @@ public class JwtTokenService
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecurityKey"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // hashes the security
         // claims hold User data
-        var claims = new[] //claims are what is going to be written into the Payload of the token
+        var claims = new List<Claim>() //claims are what is going to be written into the Payload of the token
         {
-            new Claim(ClaimTypes.Sid, user.Id.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+            // todo make own claim Interface
+            new Claim("Id", user.Id.ToString()),
+            new Claim("Username", user.Username),
+            new Claim("fullName", user.FirstName + " " + user.LastName),
         };
+        foreach (Role role in user.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.RoleName)); //todo make ClaimType.Role
+        }
 
         var token = new JwtSecurityToken(
             _configuration["Jwt:Issuer"],

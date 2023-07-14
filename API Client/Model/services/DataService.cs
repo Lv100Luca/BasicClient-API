@@ -29,11 +29,11 @@ public class DataService
 
     public User? AddUser(UserDto user)
     {
-        var newUser = new User
+        var newUser = new User // todo remove temporary display of unhashed password
         {
             Username = user.username,
             FirstName = user.name,
-            LastName = user.surname,
+            LastName = user.password,
         };
         newUser.Password = _passwordHasher.HashPassword(newUser, user.password);
         // List<Role> roles = new List<Role>();
@@ -47,16 +47,18 @@ public class DataService
         //     }
         // }
         // newUser.Roles = roles;
-
-        newUser.Roles = user.roles
-        .Select(GetRoleById)
-        .Where(role => role is not null)
-        .Select(role =>
+        if (user.roles != null)
         {
-            role!.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped because of .Where
-            return role;
-        })
-        .ToList();
+            newUser.Roles = user.roles
+            .Select(GetRoleById)
+            .Where(role => role is not null)
+            .Select(role =>
+            {
+                role!.Users.Add(newUser); // seems to be no issue -> no roles/not existing roles get skipped because of .Where
+                return role;
+            })
+            .ToList();
+        }
 
         _context.Users.Add(newUser);
         _context.SaveChanges();
@@ -107,7 +109,7 @@ public class DataService
 
     public Role? GetRoleById(int id)
     {
-        return _context.Roles.FirstOrDefault(r => r.Id == id);
+        return _context.Roles.FirstOrDefault(r => r.Id == id) ?? null;
     }
 
 
@@ -118,7 +120,7 @@ public class DataService
         {
             return null;
         }
-        var success = _passwordHasher.VerifyHashedPassword(user, user.Password, userLogin.Password) == 0;
+        var success = _passwordHasher.VerifyHashedPassword(user, user.Password, userLogin.Password) == PasswordVerificationResult.Success;
 
         return success ? user : null;
     }

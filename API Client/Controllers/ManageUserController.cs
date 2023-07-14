@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_Client.Controllers;
 
+[Authorize(Roles = "admin")]
 public class ManageUserController : ControllerBase
 {
     private readonly DataService _dataService;
@@ -20,7 +21,6 @@ public class ManageUserController : ControllerBase
 
 
     [HttpGet("all")]
-    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult<List<User>> GetAllUsers()
@@ -44,6 +44,7 @@ public class ManageUserController : ControllerBase
 
 
     [HttpPost("user")]
+    [AllowAnonymous]
     public IActionResult PostUser(UserDto user)
     {
         var newUser = _dataService.AddUser(user);
@@ -51,7 +52,7 @@ public class ManageUserController : ControllerBase
         {
             return Created(newUser.Id.ToString(), newUser);
         }
-        return BadRequest("hm");
+        return BadRequest("hm"); // todo look at error handling
     }
 
 

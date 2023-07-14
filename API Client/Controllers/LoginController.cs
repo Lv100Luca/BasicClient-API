@@ -3,7 +3,6 @@ using API_Client.Model.DTO;
 using API_Client.Model.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API_Client.Controllers;
 
@@ -24,6 +23,8 @@ public class LoginController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Login(LoginDto userLogin)
     {
         var user = _dataService.Authenticate(userLogin);
@@ -36,12 +37,15 @@ public class LoginController : ControllerBase
 
 
     [HttpPost("me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Me()
     {
         try
         {
             var token = _jwtTokenService.ParseToken(HttpContext);
-            var user = _dataService.GetUserById(int.Parse(_jwtTokenService.GetClaimFromToken(token, ClaimTypes.Sid))); // todo better error handling 
+            var user = _dataService.GetUserById(int.Parse(_jwtTokenService.GetClaimFromToken(token, "Id"))); // todo better error handling 
             if (user is not null)
             {
                 return Ok(user);
@@ -57,9 +61,38 @@ public class LoginController : ControllerBase
 
 
     [HttpPost("test")]
-    [Authorize]
     public IActionResult Test()
     {
+        return Ok();
+    }
+
+
+    [HttpGet("admin")]
+    [Authorize(Roles = "admin")]
+    public IActionResult AdminEndpoint()
+    {
+        // Handle the authorized request for the "admin" role
+
+        return Ok();
+    }
+
+
+    [HttpGet("user")]
+    [Authorize(Roles = "user")]
+    public IActionResult UserEndpoint()
+    {
+        // Handle the authorized request for the "user" role
+
+        return Ok();
+    }
+
+
+    [HttpGet("both")]
+    [Authorize(Roles = "admin, user")]
+    public IActionResult NoRoleEndpoint()
+    {
+        // Handle the authorized request for users with no specific roles
+
         return Ok();
     }
 }

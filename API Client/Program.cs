@@ -59,6 +59,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecurityKey"])), // set an expected signature for the token
     };
 });
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1",

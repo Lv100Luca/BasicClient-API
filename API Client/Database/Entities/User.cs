@@ -19,7 +19,7 @@ public class User // todo add Mail Field
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
 
-    public List<Role> Roles { get; set; }
+    public List<Role> Roles { get; set; } = new List<Role>();
 
 
     override public string ToString()
